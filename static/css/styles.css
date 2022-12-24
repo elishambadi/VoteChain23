@@ -1,0 +1,20 @@
+.header {
+    background-color: greenyellow;
+    height: 60px;
+}
+.content {
+    min-height: 700px;
+}
+.footer {
+    height: 50px;
+    padding-left: 600px;
+}
+
+.voterinfo {
+    position: relative;
+    padding-left: 400px;
+    padding-top: 200px;
+}
+body {
+    background-color: rgb(235, 232, 232);
+}

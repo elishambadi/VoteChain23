@@ -1,7 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %} Profile {% endblock %}
+{% block title %} Voter Profile {% endblock %}
 
 {% block content %}
-  <h1> This is the home page </h1>
+  <h1> Your Vote Your Future</h1>
+
+  <!--  If voter is the database/registered the below should be displayed -->
+  
+    {% for voter in voters %}
+      <h2>{{ voter.Name}}</h2>
+      <p>{{ voter.ID}}</p>
+      <p>{{ voter.provice}}</p>
+    {% endfor %}
+
+    <div class="status">
+      <h2>VOTE STATUS</h2>
+      <p2>Display status</p2>
+      <!--  If voter status is registered add not yet voted the link below should display ad redirect them to the vote page-->
+      <link rel="stylesheet" href="">
+    </div>
+
+
+
+
+
 {% endblock%}
