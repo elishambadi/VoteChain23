@@ -18,3 +18,13 @@
 body {
     background-color: rgb(235, 232, 232);
 }
+.sidebar {
+    background-color: grey;
+    max-height: 900px;
+    overflow-y: scroll;
+
+}
+.list-group-item {
+    background-color: transparent;
+    color: white;
+}
