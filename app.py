@@ -32,7 +32,7 @@ def home():
 @app.route('/login')
 def login_page():
     #return 'Welcome to login page';
-    return render_template('login.html')
+    return render_template('index.html')
 
 @app.route('/register')
 def register():

@@ -6,16 +6,29 @@
   <h1> Your Vote Your Future</h1>
 
   <!--  If voter is the database/registered the below should be displayed -->
-  
-    {% for voter in voters %}
+   <!--  {% for voter in voters %}
       <h2>{{ voter.Name}}</h2>
       <p>{{ voter.ID}}</p>
       <p>{{ voter.provice}}</p>
-    {% endfor %}
+    {% endfor %} -->
 
     <div class="status">
-      <h2>VOTE STATUS</h2>
-      <p2>Display status</p2>
+      <h2>VOTER STATUS</h2>
+      <br>
+      <div class="card text-bg-success mb-3" style="max-width: 700px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="static/images/VOTER_AVI.png" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">Voter Name</h5>
+              <p class="card-text">This Individual. Id no. ##### is a regestered voter in so and so county and is elligble to vote. To proceed to voting page click the link below.</p>
+              <p class="card-text"><small class="text-dark">Regestration date</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
       <!--  If voter status is registered add not yet voted the link below should display ad redirect them to the vote page-->
       <link rel="stylesheet" href="">
     </div>
