@@ -8,6 +8,8 @@ To run the program, make app.py executable.
 
 Run app.py as a script and access on the browser.
 
+## Blockchain
+
 Sawtooth blockchain is run from the vote-_sawtooth folder.
 
 To run the blockchain, ensure you are in the blockchain folder. Then run two commands in different tabs:
