@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "axios": "^1.2.1",
+    "express": "^4.18.2",
+    "joi": "^17.7.0",
+    "mongoose": "^6.8.2",
+    "sawtooth-sdk-js": "^1.2.0",
+    "secp256k1": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.0",
+    "nodemon": "^2.0.20"
+  },
+  "name": "sawtoothtest",
+  "version": "1.0.0",
+  "description": "Sawtooth Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "contract": "node transaction-processor.js",
+    "dev": "nodemon main.js",
+    "test": "nodemon test.js"
+  },
+  "author": "Elisha",
+  "license": "ISC"
+}
