@@ -9,16 +9,21 @@ const { SECRET } = require('../config');
 exports.loginUser = async (req, res) => {
     const valid = loginUserSchema.validate(req.body)
     if (valid.error) {
+        // Write a meaningful error message
         return res.json(valid.error.details).status(400);
     }
-    const {username, password} = valid.value
+    
+    const { username, password} = valid.value
     const user = await User.findOne({
         username,
-        password,
-    })
+        password
+    });
+
+    // console.log(user);
+
     if (!user) {
         return res.status(400).json({
-            message: "Username or password wrong"
+            message: 'Username or password incorrect'
         })
     }
 
@@ -50,13 +55,14 @@ exports.registerUser = async (req, res) => {
     }
 
     const { privateKey, publicKey } = createPrivateKey();
-    const { username, name } = req.body;
+    const { username, name, password } = req.body;
 
     await User.create({
         username,
         name,
         privateKey,
-        publicKey
+        publicKey,
+        password
     })
 
     res.json({

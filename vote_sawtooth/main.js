@@ -3,7 +3,9 @@ const app = express();
 const user = require('./routes/user')
 const jwt = require('jsonwebtoken')
 const port = process.env.PORT || 8080;
-const { SECRET } = require('./config')
+const { SECRET } = require('./config');
+const authMiddleware = require('./auth-middleware');
+const vote = require('./routes/vote')
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -16,22 +18,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', user)
 
 // Validate API tokens
-app.use('/api', function authenticateToken(req, res, next) {
-    const authHeader = res.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-
-    if (token == null) return res.sendStatus(401)
-
-    jwt.verify(token, SECRET, (err, user) => {
-        console.log(err)
-
-        if (err) return res.sendStatus(403)
-
-        req.user = user
-
-        next()
-    })
-}, (req, res) => res.json({"OK": "Ok"}))
+app.use('/api', authMiddleware, vote)
 
 const start = async () => {
     try {

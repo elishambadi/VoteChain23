@@ -18,7 +18,8 @@
   "scripts": {
     "contract": "node transaction-processor.js",
     "dev": "nodemon main.js",
-    "test": "nodemon test.js"
+    "test": "nodemon test.js",
+    "tp": "nodemon transaction-processor.js"
   },
   "author": "Elisha",
   "license": "ISC"

@@ -107,18 +107,6 @@ class IntegerKeyHandler extends TransactionHandler {
         // let verb = "set"
         let value = "We gottem now";
 
-        // // Determine the action to apply based on the verb
-        // let actionFn
-        // if (verb === 'set') {
-        //     actionFn = _applySet
-        // } else if (verb === 'dec') {
-        //     actionFn = _applyDec
-        // } else if (verb === 'inc') {
-        //     actionFn = _applyInc
-        // } else {
-        //     throw new InvalidTransaction(`Verb must be set, inc, dec not ${verb}`)
-        // }
-
         let address = INT_KEY_NAMESPACE + _hash(name).slice(-64)
 
         // Get the current state, for the key's address:

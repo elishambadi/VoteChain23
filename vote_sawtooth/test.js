@@ -6,7 +6,8 @@ const axios = require('axios').default;
 const { Secp256k1PrivateKey } = require('sawtooth-sdk-js/signing/secp256k1')
 const { CryptoFactory, createContext } = require('sawtooth-sdk-js/signing')
 
-const protobuf = require('sawtooth-sdk-js/protobuf')
+const protobuf = require('sawtooth-sdk-js/protobuf');
+const { family, actions } = require('./constants');
 
 const createPrivateKey = () => {
   const msg = randomBytes(32)
@@ -16,7 +17,7 @@ const createPrivateKey = () => {
   } while (!secp256k1.privateKeyVerify(privKey))
   const pubKey = secp256k1.publicKeyCreate(privKey)
   const sigObj = secp256k1.ecdsaSign(msg, privKey)
-  console.log(secp256k1.ecdsaVerify(sigObj.signature, msg, pubKey))
+//   console.log(secp256k1.ecdsaVerify(sigObj.signature, msg, pubKey))
   return privKey.toString('hex')
 }
 
@@ -31,14 +32,23 @@ const signer = new CryptoFactory(context).newSigner(privateKey);
 //Prepare a payload / Data to be stored
 //Payload > Transaction > TransactionList > Batch > BatchList > Bytes > REST_API
 
-const payload = "Voter-ID:4549829, Governor: A05"
+// const payload = JSON.stringify({
+//     id: 'Voter ID 1', //Used to generate blockchain address
+//     action: actions.place_vote //Datad
+// })
+
+const payload = JSON.stringify({
+    id: "Voter ID 23: Governor: A123==",
+    actions: actions.place_vote
+});
+
 const payloadBytes = Buffer.from(payload);
 
 const transactionHeaderBytes = protobuf.TransactionHeader.encode({
-    familyName: 'intkey',
-    familyVersion: '1.0',
-    inputs: ['1cf126'],
-    outputs: ['1cf126'],
+    familyName: family.name,
+    familyVersion: family.version,
+    inputs: ['9b416c'],
+    outputs: ['9b416c'],
     signerPublicKey: signer.getPublicKey().asHex(),
     nonce: `${Math.random()}`,
     batcherPublicKey: signer.getPublicKey().asHex(),
@@ -67,13 +77,13 @@ const batch = protobuf.Batch.create({
 
 const batches = [batch ];
 
-console.log(batches)
+// console.log(batches)
 
 const batchListBytes = protobuf.BatchList.encode({
     batches: batches
 }).finish();
 
-console.log(batchListBytes.toString())
+// console.log(batchListBytes.toString())
 
 // AXIOS
 
