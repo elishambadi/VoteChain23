@@ -3,5 +3,66 @@
 {% block title %} Results {% endblock %}
 
 {% block content %}
-  <h1> This is the voting page </h1>
+  <!-- This is the results page </h1> --> 
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-3 sidebar">
+        <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-action active " aria-current="true">
+            National Tally
+          </a>
+          <a href="#" class="list-group-item list-group-item-dark">Nairobi</a>
+          <a href="#" class="list-group-item list-group-item-dark">Rift Valley</a>
+          <a href="#" class="list-group-item list-group-item-dark">Central</a>
+          <a class="list-group-item list-group-item-dark">North Easter</a>
+          <a href="#" class="list-group-item list-group-item-dark">Coast</a>
+          <a href="#" class="list-group-item list-group-item-dark">Nyanza</a>
+          <a href="#" class="list-group-item list-group-item-dark">Western</a>
+          <a class="list-group-item list-group-item-dark">A disabled link item</a>
+          <a href="#" class="list-group-item list-group-item-dark">Eastern</a>
+          <a href="#" class="list-group-item list-group-item-dark">A third link item</a>
+          <a href="#" class="list-group-item list-group-item-dark">A fourth link item</a>
+          <a class="list-group-item list-group-item-dark">A disabled link item</a>
+          <a href="#" class="list-group-item list-group-item-dark">Western</a>
+          <a class="list-group-item list-group-item-dark">A disabled link item</a>
+          <a href="#" class="list-group-item list-group-item-dark">Eastern</a>
+          <a href="#" class="list-group-item list-group-item-dark">A third link item</a>
+          <a href="#" class="list-group-item list-group-item-dark">A fourth link item</a>
+          <a class="list-group-item list-group-item-dark">A disabled link item</a>
+        </div>
+      </div>
+      <div class="col-9">
+        <h2>Results Tally</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Party</th>
+              <th scope="col">Results</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Trump but Teana</td>
+              <td>Otto</td>
+              <td>500</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Bill not Clinton</td>
+              <td>Thorton</td>
+              <td>1000</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td colspan="2">Uhuru not Free</td>
+              <td>3000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 {% endblock%}
