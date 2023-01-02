@@ -1,0 +1,5 @@
+<h1>This is results page</h1>
+
+{% for result in votes %}
+<p> Candidate ID {{ result[0]}} : {{result[1]}} <p>
+{% endfor %}

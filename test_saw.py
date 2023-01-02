@@ -2,9 +2,10 @@
 #This is some code to test the Sawtooth API
 
 import requests
-from flask import Flask
+from flask import Flask, render_template
+from collections import Counter
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 API_KEY = '12345abcXYZ'
 
@@ -62,6 +63,15 @@ def test_vote():
 
     return data
 
+def test_all_votes():
+    try:
+        data = requests.get('http://localhost:8008/state')
+    except Exception as exc:
+        print(exc)
+        data = None
+
+    return data
+
 @app.route('/test', methods=["GET"])
 def test_api_route():
     resp = test_api().json()
@@ -103,6 +113,29 @@ def test_vote_api():
         print(exc)
         text = "There was an error."
     return text
+
+@app.route('/all_votes', methods=["GET"])
+def all_votes():
+    resp = test_all_votes().json()
+
+    try:
+        votes = resp
+    except Exception as exc:
+        print(exc)
+        votes = "There was an error"
+
+    votes_list =votes['data']
+    dict_vote = []
+    cand_votes = []
+
+    for i in range(1, len(votes_list)):
+        voter_id = votes_list[i].get('data')[3:7]
+        cand_id = votes_list[i].get('data')[9:12]
+        dict_vote.append(cand_id)
+
+    result = Counter(dict_vote)
+    final = result.items()
+    return render_template('test.html', votes=final)
     
 if __name__ == '__main__':
     app.run(debug=True)     
