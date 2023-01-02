@@ -3,14 +3,12 @@ const { sendTransaction } = require("../service/transaction")
 
 exports.place_vote = (req, res) => {
 
-    const detail = req.body.detail
+    const vote = req.body.vote
 
     const id = req.params.id;
     const payload = {
-        id,
-        owner: req.user.publicKey,
-        actions: actions.place_vote,
-        detail: detail
+        id: vote,
+        actions: actions.place_vote
     }
 
     return sendTransaction(payload, req.user.publicKey).then((result) => {

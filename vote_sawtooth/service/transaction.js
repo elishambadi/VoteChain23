@@ -12,15 +12,6 @@ const User = require('../schemas/user');
 const { getSigner } = require('./credential');
 
 
-//Prepare a payload / Data to be stored
-//Payload > Transaction > TransactionList > Batch > BatchList > Bytes > REST_API
-
-// const payload = JSON.stringify({
-//     id: "Voter ID 25: Governor: A1231",
-//     action: actions.place_vote,
-//     details: "VID-25: GID-A23"
-// });
-
 const sendTransaction = async (payload, signerPublicKey) => {
     const user = await User.findOne({
         publicKey: signerPublicKey
@@ -64,7 +55,7 @@ const sendTransaction = async (payload, signerPublicKey) => {
         transactions: transactions
     })
     
-    const batches = [batch ];
+    const batches = [batch];
     
     // console.log(batches)
     
