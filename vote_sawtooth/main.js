@@ -6,9 +6,15 @@ const port = process.env.PORT || 8080;
 const { SECRET } = require('./config');
 const authMiddleware = require('./auth-middleware');
 const vote = require('./routes/vote')
+const cors = require('cors');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+
+app.use(cors({
+    origin: 'http://localhost:5000',
+    methods: ['GET','POST']
+}));
 
 app.get('/health', (req, res) => {
     res.json({

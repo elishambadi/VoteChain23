@@ -5,7 +5,6 @@ exports.place_vote = (req, res) => {
 
     const vote = req.body.vote
 
-    const id = req.params.id;
     const payload = {
         id: vote,
         actions: actions.place_vote
