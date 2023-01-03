@@ -39,35 +39,48 @@ exports.loginUser = async (req, res) => {
     })
 }
 
+exports.allUser = async (req, res) => {
+    const all_users = await User.find()
+    return res.json({
+        all_users: all_users
+    })
+}
 exports.registerUser = async (req, res) => {
     const valid = registerUserSchema.validate(req.body);
     if (valid.error) {
         return res.json(valid.error.details).status(400);
     }
 
+    // Check if user exists using ID number
     const user = await User.findOne({
-        username: req.body.username
+        id_number: req.body.id_number
     })
     if (user) {
         return res.status(409).json({
-            message: "User already exists"
+            message: "User with ID already exists"
         })
     }
 
     const { privateKey, publicKey } = createPrivateKey();
-    const { username, name, password } = req.body;
 
+    // Parameters to be passed in the request
+    const { username, name, password, id_number, email } = req.body;
+
+    // Create a new user with the given values
     await User.create({
         username,
+        id_number,
         name,
+        email,
         privateKey,
         publicKey,
         password
     })
 
     res.json({
-        name,
         username,
+        password,
+        email,
         publicKey
     })
 }

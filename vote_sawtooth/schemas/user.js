@@ -6,6 +6,7 @@ const userSchema = new Schema({
   id_number: String,
   name: String,
   password: String,
+  email: String,
   privateKey: String,
   publicKey: String
 });
