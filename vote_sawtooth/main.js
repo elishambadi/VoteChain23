@@ -7,6 +7,7 @@ const { SECRET } = require('./config');
 const authMiddleware = require('./auth-middleware');
 const vote = require('./routes/vote')
 const cors = require('cors');
+const candidate = require('./routes/candidate')
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -25,6 +26,7 @@ app.use('/auth', user)
 
 // Validate API tokens
 app.use('/api', authMiddleware, vote)
+app.use('/candidate', candidate)
 
 const start = async () => {
     try {

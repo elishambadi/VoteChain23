@@ -89,6 +89,15 @@ def query_api_login(username, password):
 
     return data
 
+def get_candidates():
+    try:
+        data = requests.get('http://localhost:8080/candidate/all')
+    except Exception as exc:
+        print(exc)
+        data = "Data not found"
+
+    return data
+
 # End of functions
 
 # Start of Routes
@@ -150,8 +159,11 @@ def profile():
 
 @app.route('/vote')
 def vote():
+    # Get candidates
+    resp = get_candidates()
+
     #return 'Welcome to voting page';
-    return render_template('vote.html')
+    return render_template('vote.html', cands=resp)
 
 @app.route('/results')
 def results():

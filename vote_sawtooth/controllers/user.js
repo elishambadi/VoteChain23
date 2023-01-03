@@ -45,6 +45,7 @@ exports.allUser = async (req, res) => {
         all_users: all_users
     })
 }
+
 exports.registerUser = async (req, res) => {
     const valid = registerUserSchema.validate(req.body);
     if (valid.error) {
