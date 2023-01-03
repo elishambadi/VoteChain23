@@ -131,6 +131,11 @@ def test_all_votes():
 def home():
     return render_template('index.html')
 
+@app.route('/about')
+def landing():
+    #return 'Welcome to login page';
+    return render_template('landing.html')
+
 @app.route('/login', methods=('GET', 'POST'))
 def login_page():
     if request.method == 'POST':
