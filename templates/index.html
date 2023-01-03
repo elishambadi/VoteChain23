@@ -1,22 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1> Welcome to the voting platform</h1>
-  <h2>Kindly input your details below to confirm your registration status</h2>
-  <div class="voterinfo">
 
-      <p>ENTER NAME BELOW</p>
-      <input>
-      <!--   button> Submit button  -->
-      <br>
+<div class="container text-center">
+    <h4>Kindly input your details below to confirm your registration status</h4>
+    <br>
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      Page Refreshed successfully. Welcome to VoteChain
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
-      <p>ENTER ID NO BELOW</p>
-      <input>
-      <br>
+    <div class="voterinfo">
+
+      <div class="mb-3">
+        <label for="formGroupExampleInput" class="form-label">Input your Full Names</label>
+        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="John Doe">
+      </div>
+      <div class="mb-3">
+        <label for="formGroupExampleInput2" class="form-label">ID Number</label>
+        <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="example : 33209024">
+      </div>
       
-      <button> Submit </button>
+      <button type="button" class="btn btn-success">Submit</button>
 
+      </div>
   </div>
-
 {% endblock%}
  

@@ -29,10 +29,10 @@ voters = [
 def home():
     return render_template('index.html')
 
-@app.route('/login')
-def login_page():
+@app.route('/about')
+def landing():
     #return 'Welcome to login page';
-    return render_template('index.html')
+    return render_template('landing.html')
 
 @app.route('/register')
 def register():
