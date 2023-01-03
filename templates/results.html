@@ -60,6 +60,15 @@
               <td colspan="2">Uhuru not Free</td>
               <td>3000</td>
             </tr>
+
+            {% for cand in votes %}
+            <tr>
+              <th scope="row">3</th>
+              <td>{{ cand[0] }}</td>
+              <td>Some Party</td>
+              <td>{{ cand[1] }}</td>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

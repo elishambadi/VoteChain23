@@ -4,6 +4,7 @@ import os
 import requests
 from flask import Flask, redirect, url_for, render_template, request, flash
 from flask_sqlalchemy import SQLAlchemy
+from collections import Counter
 
 from sqlalchemy.sql import func
 
@@ -98,6 +99,30 @@ def get_candidates():
 
     return data
 
+def send_vote(cand_id):
+    vote="VID36941463CID"+cand_id+"x2022"
+    try:
+        headers = {
+            "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbGlzbyIsInB1YmxpY0tleSI6IjAyYjJkNThkODE5Nzg0OWRkYmMzMDFiMDIxZmI0Nzk1ZjMzZjE2MzMyZjdiMDllNDJhMWVmYzI1OWMzMjQ3ZDEzOSIsImlhdCI6MTY3Mjc1MjM5MSwiZXhwIjoxNjcyNzU0MTkxfQ.7YGEN6LK_0Ek51jRp5oMApSPUuJhfND76vth8M4rFMQ'
+        }
+        vote_info = {
+            "vote":vote
+        }
+        data = requests.post('http://localhost:8080/api/vote', json=vote_info, headers=headers)
+
+    except Exception as exc:
+        print(exc)
+        data = None
+
+def test_all_votes():
+    try:
+        data = requests.get('http://localhost:8008/state')
+    except Exception as exc:
+        print(exc)
+        data = None
+
+    return data
+
 # End of functions
 
 # Start of Routes
@@ -157,17 +182,46 @@ def profile():
     #return 'Welcome to login page';
     return render_template('profile.html', voters=voters)
 
-@app.route('/vote')
+@app.route('/vote', methods=('GET', 'POST'))
 def vote():
-    # Get candidates
-    resp = get_candidates()
 
-    #return 'Welcome to voting page';
-    return render_template('vote.html', cands=resp)
+    if request.method == 'POST':
+        voted_cand_id = request.form['voted-cand-id']
+
+        resp = send_vote(voted_cand_id)
+        print(resp)
+        return resp
+    # Get candidates
+    else:
+        resp = get_candidates().json()['all_candidates']
+
+        #return 'Welcome to voting page';
+        return render_template('vote.html', cands=resp)
 
 @app.route('/results')
 def results():
-    return render_template('results.html')
+    resp = test_all_votes().json()
+
+    try:
+        votes = resp
+    except Exception as exc:
+        print(exc)
+        votes = "There was an error"
+
+    votes_list =votes['data']
+    dict_vote = []
+    cand_votes = []
+
+    for i in range(1, len(votes_list)):
+        # voter_id = votes_list[i].get('data')
+        voter_id = votes_list[i].get('data')[9:16]
+        cand_id = votes_list[i].get('data')[14:20]
+        dict_vote.append(cand_id)
+
+    result = Counter(dict_vote)
+    final = result.items()
+
+    return render_template('results.html', votes=final)
 
 #@app.route('/{username}/profile')
 #def user_profile():
