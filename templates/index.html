@@ -3,18 +3,19 @@
 {% block content %}
   <h1> Welcome to the voting platform</h1>
   <h2>Kindly input your details below to confirm your registration status</h2>
-  <div class="voterinfo">
+  <div class="voterinfo container">
 
-      <p>ENTER NAME BELOW</p>
-      <input>
-      <!--   button> Submit button  -->
-      <br>
-
-      <p>ENTER ID NO BELOW</p>
-      <input>
-      <br>
-      
-      <button> Submit </button>
+    <form method="post">
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Username</label>
+        <input type="text" class="form-control" id="loginUsername" maxlength="20" name="username" value="{{request.form['username']}}" required="true">
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Password</label>
+        <input type="password" class="form-control" id="loginPassword" maxlength="50" name="password"" required="true">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
   </div>
 

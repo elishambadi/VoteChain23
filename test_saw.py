@@ -50,10 +50,10 @@ def test_api():
 def test_vote():
     try:
         headers = {
-            "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbGlzbzEiLCJwdWJsaWNLZXkiOiIwMjliYzI3MDcyZTFhNGRiZGEwNmU0MWU3ZTYxNTMwMjNmMTkyOGVlZjNhOTE2Njk4ZDZhYWNkMjQ1ODkzNDJhODciLCJpYXQiOjE2NzI2NjU0NTEsImV4cCI6MTY3MjY2NzI1MX0.4n_uOcf1T6Ae1XBzPW5QUZBbnLE6aPJC2GGdkIO2ASU'
+            "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbGlzbzEiLCJwdWJsaWNLZXkiOiIwMzA4ZGRjMDIyOThmMGNlMjgxNjI1NjQxZWMyZWU2MTY0MWQ0MGFjMjNhMWViMzgxYzRlZmY2ZGFlZjk1NDgyNDUiLCJpYXQiOjE2NzI2OTI5NjYsImV4cCI6MTY3MjY5NDc2Nn0.emWir9VxqTbVMYKUgerbo5aQUd3pLh-PqjHxP7kjAqg'
         }
         vote_info = {
-            "vote":"VID:2211G:G115"
+            "vote":"VID2219GP004x2022"
         }
         data = requests.post('http://localhost:8080/api/vote', json=vote_info, headers=headers)
 
@@ -129,6 +129,7 @@ def all_votes():
     cand_votes = []
 
     for i in range(1, len(votes_list)):
+        # voter_id = votes_list[i].get('data')
         voter_id = votes_list[i].get('data')[3:7]
         cand_id = votes_list[i].get('data')[9:12]
         dict_vote.append(cand_id)
