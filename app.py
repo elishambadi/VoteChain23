@@ -2,7 +2,7 @@
 # Entry point of the app
 import os
 import requests
-from flask import Flask, redirect, url_for, render_template, request, flash
+from flask import Flask, redirect, url_for, render_template, request, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from collections import Counter
 
@@ -103,7 +103,7 @@ def send_vote(cand_id):
     vote="VID36941463CID"+cand_id+"x2022"
     try:
         headers = {
-            "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbGlzbyIsInB1YmxpY0tleSI6IjAyYjJkNThkODE5Nzg0OWRkYmMzMDFiMDIxZmI0Nzk1ZjMzZjE2MzMyZjdiMDllNDJhMWVmYzI1OWMzMjQ3ZDEzOSIsImlhdCI6MTY3Mjc1MjM5MSwiZXhwIjoxNjcyNzU0MTkxfQ.7YGEN6LK_0Ek51jRp5oMApSPUuJhfND76vth8M4rFMQ'
+            "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbGlzbyIsInB1YmxpY0tleSI6IjAzYzYyYjIwMGE5MDRmZjUxZTBmM2NjMzAyMjgyMWI2ZjY4ZDk4MTgzNGQyODUzMjBmOGY3M2FhMmYxNjdiZDcxMiIsImlhdCI6MTY3MjgzNDQ5MSwiZXhwIjoxNjcyODM2MjkxfQ.jCauaIs9TZ-EMQG3Sr9mWLbZGVq50kFkBHbL4YsaVds'
         }
         vote_info = {
             "vote":vote
@@ -114,6 +114,8 @@ def send_vote(cand_id):
         print(exc)
         data = None
 
+    return data
+
 def test_all_votes():
     try:
         data = requests.get('http://localhost:8008/state')
@@ -122,6 +124,15 @@ def test_all_votes():
         data = None
 
     return data
+
+def get_vote_data(link):
+    try:
+        data = requests.get(link)
+    except Exception as exc:
+        print(exc)
+        data = None
+
+    return data 
 
 # End of functions
 
@@ -187,15 +198,33 @@ def profile():
     #return 'Welcome to login page';
     return render_template('profile.html', voters=voters)
 
+@app.route('/confirm', methods=('GET', 'POST'))
+def confirm():
+    #return 'Welcome to login page';
+
+    link = session['vote-link']
+
+    vote_status = get_vote_data(link).json()
+
+    return render_template('confirm.html', resp=vote_status)
+
 @app.route('/vote', methods=('GET', 'POST'))
 def vote():
 
     if request.method == 'POST':
         voted_cand_id = request.form['voted-cand-id']
 
-        resp = send_vote(voted_cand_id)
-        print(resp)
-        return resp
+        resp = send_vote(voted_cand_id).json()
+        if 'link' in resp:
+            link = resp['link']
+            vote_status = get_vote_data(link).json()
+
+            session['vote-link'] = link
+            # return render_template('confirm.html', resp=vote_status)
+            return redirect(url_for('confirm'))
+        else:
+            return "Error connecting to DB. Please contact the system administrator."
+
     # Get candidates
     else:
         resp = get_candidates().json()['all_candidates']

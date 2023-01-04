@@ -12,16 +12,17 @@
 
     <div class="voterinfo">
 
-      <div class="mb-3">
-        <label for="formGroupExampleInput" class="form-label">Input your Full Names</label>
-        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="John Doe">
-      </div>
-      <div class="mb-3">
-        <label for="formGroupExampleInput2" class="form-label">ID Number</label>
-        <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="example : 33209024">
-      </div>
-      
-      <button type="button" class="btn btn-success">Submit</button>
+      <form method="post">
+        <div class="mb-3">
+          <label for="formGroupExampleInput" class="form-label">Enter your Username:</label>
+          <input type="text" name="username" class="form-control" id="formGroupExampleInput" placeholder="John Doe">
+        </div>
+        <div class="mb-3">
+          <label for="formGroupExampleInput2" class="form-label">Enter your password:</label>
+          <input type="text" name="password" class="form-control" id="formGroupExampleInput2" placeholder="example : 33209024">
+        </div>
+        <input type="submit" value="Login"  class="btn btn-success">
+      </form>
 
       </div>
   </div>

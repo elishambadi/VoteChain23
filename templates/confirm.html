@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %} Voter Profile {% endblock %}
+
+{% block content %}
+<div class="container">
+    <br>
+    <h3 class="text-center">Confirm your vote</h3>
+
+    <p>Status: {{ resp['data'][0]['status'] }}</p>
+
+    {% if resp['data'][0]['invalid_transactions'][0] %}
+        <p>{{ resp['data'][0]['invalid_transactions'][0]['message'] }}</p>
+    {% endif %}
+    <br>
+
+    <p>Link: {{ resp['link'] }} </p>
+
+    <form method="post">
+        <input type="hidden" value=" {{ resp['link'] }} ">
+        <input type="submit" class="btn btn-success">
+    </form>
+</div>
+{% endblock%}
