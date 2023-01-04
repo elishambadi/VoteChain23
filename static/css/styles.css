@@ -45,8 +45,12 @@ body {
 }
 #promo-text {
     color: #ffff;
+    padding-top: 30px;
 }
 
+.logo_img {
+    border-radius: 20px;
+}
 #services {
     padding: 80px;
 }
@@ -78,4 +82,46 @@ body {
     border: none;
     border-radius: 20px;
     background-image: linear-gradient(to right, #034c11, #022b0a);
+}
+
+/*about us */
+#about-us {
+    background: #022b0a;
+    padding-bottom: 50px;
+    padding-top: 50px;
+    color: aliceblue;
+}
+.about-title {
+   font-size: 40px;
+   font-weight: 600;
+   margin-top: 8%;
+}
+#about-us ul li {
+    margin: 10px 0;
+    margin-left: 20px;
+}
+#about-us ul {
+    margin-left: 30px;
+}
+.about-img {
+    border-radius: 20px;
+    margin-top: 70px;
+    margin-bottom: 30px;
+}
+/*project by contact*/
+
+#contact {
+    background: rgb(235, 232, 232);
+    padding: 60px 0;
+}
+#contact p {
+    font-size: 20px;
+    font-weight: 600;
+
+}
+
+.social-icons {
+    color: #034c11;
+    border-spacing: 10px;
+    padding: 20px;
 }
