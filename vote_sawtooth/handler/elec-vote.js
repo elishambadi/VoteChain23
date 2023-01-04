@@ -38,7 +38,7 @@ class VoteHandler extends TransactionHandler {
                 // This code takes some time to run...
                 // I suppose it checks the chole blockchain for addresses
                 if(data && data[address] && data[address].length !== 0){
-                    throw new InvalidTransaction('Existing vote found');
+                    throw new InvalidTransaction('You have already voted! Please wait for the results');
                 }
 
                 return context.setState({

@@ -2,6 +2,7 @@
 # Entry point of the app
 import os
 import requests
+import json
 from flask import Flask, redirect, url_for, render_template, request, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from collections import Counter
@@ -103,7 +104,7 @@ def send_vote(cand_id):
     vote="VID36941463CID"+cand_id+"x2022"
     try:
         headers = {
-            "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbGlzbyIsInB1YmxpY0tleSI6IjAzYzYyYjIwMGE5MDRmZjUxZTBmM2NjMzAyMjgyMWI2ZjY4ZDk4MTgzNGQyODUzMjBmOGY3M2FhMmYxNjdiZDcxMiIsImlhdCI6MTY3MjgzNDQ5MSwiZXhwIjoxNjcyODM2MjkxfQ.jCauaIs9TZ-EMQG3Sr9mWLbZGVq50kFkBHbL4YsaVds'
+            "Authorization": 'Bearer '+session['token']
         }
         vote_info = {
             "vote":vote
@@ -140,7 +141,7 @@ def get_vote_data(link):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return redirect(url_for('login_page'))
 
 @app.route('/about')
 def landing():
@@ -155,7 +156,10 @@ def login_page():
 
         resp = query_api_login(username, password).json()
 
-        return resp
+        if resp['access_token']:
+            session['token'] = resp['access_token']
+            session['username'] = username
+            return redirect(url_for('vote'))
     else:
         #return 'Welcome to login page';
         return render_template('index.html')
@@ -214,7 +218,11 @@ def vote():
     if request.method == 'POST':
         voted_cand_id = request.form['voted-cand-id']
 
-        resp = send_vote(voted_cand_id).json()
+        try:
+            resp = send_vote(voted_cand_id).json()
+        except json.JSONDecodeError as exc:
+            return "Your web token has expired. Please login again"
+
         if 'link' in resp:
             link = resp['link']
             vote_status = get_vote_data(link).json()
@@ -257,10 +265,11 @@ def results():
 
     return render_template('results.html', votes=final)
 
-#@app.route('/{username}/profile')
-#def user_profile():
-    #return 'Welcome to your profile';
- #   return render_template('profile.html')
+@app.route('/logout')
+def logout():
+    session.pop('token', None)
+    session.pop('username', None)
+    return redirect(url_for('home'))
 
 
 
