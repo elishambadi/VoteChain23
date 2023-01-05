@@ -101,7 +101,7 @@ def get_candidates():
     return data
 
 def send_vote(cand_id):
-    vote="VID36941463CID"+cand_id+"x2022"
+    vote="VID"+session['id_number']+"CID"+cand_id+"x2022"
     try:
         headers = {
             "Authorization": 'Bearer '+session['token']
@@ -135,6 +135,33 @@ def get_vote_data(link):
 
     return data 
 
+def find_candidate(id_number):
+    payload = {
+        "id_number":id_number
+    }
+    try:
+        data = requests.post('http://localhost:8080/candidate/find', json=payload)
+    except Exception as exc:
+        print(exc)
+        data = None
+    return data
+
+def find_all_candidates():
+    try:
+        data = requests.get('http://localhost:8080/candidate/all')
+    except Exception as exc:
+        print(exc)
+        data = None
+    return data
+
+def find_all_users():
+    try:
+        data = requests.get('http://localhost:8080/auth/all')
+    except Exception as exc:
+        print(exc)
+        data = None
+    return data
+
 # End of functions
 
 # Start of Routes
@@ -156,10 +183,13 @@ def login_page():
 
         resp = query_api_login(username, password).json()
 
-        if resp['access_token']:
+        if 'access_token' in resp:
+            session['id_number'] = resp['id_number']
             session['token'] = resp['access_token']
             session['username'] = username
             return redirect(url_for('vote'))
+        else:
+            return "Wrong username or password"
     else:
         #return 'Welcome to login page';
         return render_template('index.html')
@@ -189,9 +219,15 @@ def register():
         #     return "Hello! : "+id_no+" "+name
 
         #Sending a request
-        resp = query_api_register(username, name, password, id_no, email).json()
-                
-        return resp
+        resp = query_api_register(username, name, password, id_no, email)
+        
+        if resp.status_code == 200:
+            print("Voter {} registered successfully")
+            print(resp.json())
+            return redirect(url_for('login_page'))
+        else:
+            print(resp.status_code)
+            return "Error encountered "+str(resp.status_code)
 
     else:
         #return 'Welcome to register page';
@@ -219,21 +255,40 @@ def vote():
         voted_cand_id = request.form['voted-cand-id']
 
         try:
-            resp = send_vote(voted_cand_id).json()
-        except json.JSONDecodeError as exc:
-            return "Your web token has expired. Please login again."
-        except AttributeError as exc:
-            return "Error sending vote. You are not logged in."
+            resp = test_all_votes().json()
+        except Exception as exc:
+            print(exc)
+            return "Error getting votes"
 
-        if 'link' in resp:
-            link = resp['link']
-            vote_status = get_vote_data(link).json()
+        votes_list =resp['data']
+        dict_votes = []
+        for i in range(1, len(votes_list)):
+            # voter_id = votes_list[i].get('data')
+            voter_id = votes_list[i].get('data')[3:11]
+            dict_votes.append(voter_id)
 
-            session['vote-link'] = link
-            # return render_template('confirm.html', resp=vote_status)
-            return redirect(url_for('confirm'))
+        print(session['id_number'])
+        print(dict_votes)
+
+        if session['id_number'] in dict_votes:
+            return "You have already voted. Kindly wait for the results"
         else:
-            return "Error connecting to DB. Please contact the system administrator."
+            try:
+                resp = send_vote(voted_cand_id).json()
+            except json.JSONDecodeError as exc:
+                return "Your web token has expired. Please login again."
+            except AttributeError as exc:
+                return "Error sending vote. You are not logged in."
+
+            if 'link' in resp:
+                link = resp['link']
+                vote_status = get_vote_data(link).json()
+
+                session['vote-link'] = link
+                # return render_template('confirm.html', resp=vote_status)
+                return redirect(url_for('confirm'))
+            else:
+                return "Error connecting to DB. Please contact the system administrator."
 
     # Get candidates
     else:
@@ -260,20 +315,46 @@ def results():
         # voter_id = votes_list[i].get('data')
         voter_id = votes_list[i].get('data')[9:16]
         cand_id = votes_list[i].get('data')[14:20]
-        dict_vote.append(cand_id)
+
+        cand_name = find_candidate(cand_id).json()['user']["name"]
+
+        dict_vote.append(cand_name)
 
     result = Counter(dict_vote)
     dict_ = {str(k):v for k,v in result.items()}
     print(dict_)
 
-    # final = jsonify(dict_)
+    vote_count = len(votes_list) - 1;
 
-    return render_template('results.html', votes=dict_)
+    all_cands = get_candidates().json()['all_candidates']
 
+    try:
+        all_user = find_all_users().json()['all_users']
+    except Exception as exc:
+        print(exc)
+        all_user = "There was an error getting the user count"
+
+    users_ = len(all_user)
+
+    for i in range(len(all_cands)):
+        if all_cands[i]['name'] in dict_:
+            all_cands[i]['count'] = dict_[all_cands[i]['name']]
+        else:
+            all_cands[i]['count'] = 0
+
+    return render_template('results.html',
+        votes=dict_,
+        cands=all_cands,
+        total=vote_count,
+        user_count = users_)
+
+# Logout Route
 @app.route('/logout')
 def logout():
     session.pop('token', None)
     session.pop('username', None)
+    session.pop('vote-link', None)
+    session.pop('id_number', None)
     return redirect(url_for('home'))
 
 

@@ -13,7 +13,7 @@ exports.loginUser = async (req, res) => {
         return res.json(valid.error.details).status(400);
     }
     
-    const { username, password} = valid.value
+    const { username, password } = valid.value
     const user = await User.findOne({
         username,
         password
@@ -23,11 +23,12 @@ exports.loginUser = async (req, res) => {
 
     if (!user) {
         return res.status(400).json({
-            message: 'Username or password incorrect'
+            message: 'Username or password incorrect. Or user inexistent.'
         })
     }
 
     const { publicKey } = user;
+    const { id_number } = user;
     const token = jwt.sign({
         username,
         publicKey
@@ -35,6 +36,7 @@ exports.loginUser = async (req, res) => {
         expiresIn: '1800s'
     })
     return res.json({
+        id_number: id_number, 
         access_token: token
     })
 }
@@ -43,6 +45,18 @@ exports.allUser = async (req, res) => {
     const all_users = await User.find()
     return res.json({
         all_users: all_users
+    })
+}
+
+exports.findUser = async (req, res) => {
+    const one_user = await User.findOne({
+        id_number: req.body.id_number
+    })
+    if (!one_user){
+        return res.json({"message":"User not found"}).status(404)
+    }
+    return res.json({
+        user: one_user
     })
 }
 

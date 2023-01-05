@@ -4,11 +4,16 @@
 
 {% block content %}
   
-
-  <h5>Select your prefered candidate below</h5>
+  <br>
+  <h6 class="text-center" style="color: rgb(170, 170, 170);">VoteChain23</h6>
+  <h5 class="text-center">Select your prefered candidate below</h5>
   <br>
   <div class="container text-center">
     <div class="row">
+      {% if  cands | length  == 0 %}
+      <br><br>
+      <p class="display-5">No candidates at this time</p>
+      {% endif %}
       {% for cand in cands %}
       <div class="col-md-3">
         <div class="card h-100" style="width: 18rem;">

@@ -47,6 +47,12 @@
             </li>
             <li class=""></li>
             {% endif %}
+            {% if session['id_number'] %}
+            <li class="nav-item pl-1">
+              <a class="nav-link disabled" style="color: white;" href="#"> {{ session['id_number'] }}</a>
+            </li>
+            <li class=""></li>
+            {% endif %}
           </ul>
         </div>
       </nav>

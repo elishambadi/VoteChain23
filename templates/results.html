@@ -6,67 +6,62 @@
   <!-- This is the results page </h1> --> 
   <div class="container-fluid">
     <div class="row">
-      <div class="col-3 sidebar">
+      <!-- <div class="col-3 sidebar">
         <div class="list-group">
+          <br>
           <a href="#" class="list-group-item list-group-item-action active " aria-current="true">
             National Tally
           </a>
           <a href="#" class="list-group-item list-group-item-dark">Nairobi</a>
           <a href="#" class="list-group-item list-group-item-dark">Rift Valley</a>
           <a href="#" class="list-group-item list-group-item-dark">Central</a>
-          <a class="list-group-item list-group-item-dark">North Easter</a>
+          <a href="#" class="list-group-item list-group-item-dark">North Eastern</a>
           <a href="#" class="list-group-item list-group-item-dark">Coast</a>
           <a href="#" class="list-group-item list-group-item-dark">Nyanza</a>
           <a href="#" class="list-group-item list-group-item-dark">Western</a>
-          <a class="list-group-item list-group-item-dark">A disabled link item</a>
           <a href="#" class="list-group-item list-group-item-dark">Eastern</a>
-          <a href="#" class="list-group-item list-group-item-dark">A third link item</a>
-          <a href="#" class="list-group-item list-group-item-dark">A fourth link item</a>
-          <a class="list-group-item list-group-item-dark">A disabled link item</a>
-          <a href="#" class="list-group-item list-group-item-dark">Western</a>
-          <a class="list-group-item list-group-item-dark">A disabled link item</a>
-          <a href="#" class="list-group-item list-group-item-dark">Eastern</a>
-          <a href="#" class="list-group-item list-group-item-dark">A third link item</a>
-          <a href="#" class="list-group-item list-group-item-dark">A fourth link item</a>
-          <a class="list-group-item list-group-item-dark">A disabled link item</a>
         </div>
-      </div>
-      <div class="col-9">
-        <h2>Results Tally</h2>
+      </div> -->
+      <div class="container">
+        <br>
+        <h2 class="text-center">Results Tally</h2>
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">#</th>
+              <th scope="col">ID #</th>
               <th scope="col">Name</th>
               <th scope="col">Party</th>
               <th scope="col">Results</th>
             </tr>
           </thead>
           <tbody>
+            {% if cands|length == 0 %}
+            <p class="display-4">
+              No results to display
+            </p>
+            {% endif %}
+            {% for cand in cands %}
             <tr>
-              <th scope="row">1</th>
-              <td>Trump but Teana</td>
-              <td>Otto</td>
-              <td>500</td>
+              <th scope="row">{{cand['id_number']}}</th>
+              <td>{{ cand['name'] }}</td>
+              <td>{{ cand['party'] }} </td>
+              <td>{{ cand['count'] }}</td>
             </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Bill not Clinton</td>
-              <td>Thorton</td>
-              <td>1000</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td colspan="2">Uhuru not Free</td>
-              <td>3000</td>
-            </tr>
-
+            {% endfor %}
           </tbody>
         </table>
-        {{votes}}
+        <br>
+        <p class="display-6 text-center">Statistics</p>
 
-        <div>
-          <canvas id="myChart"></canvas>
+        <div class="row">
+          <div class="col-md-4 text-center">
+            <p>Total Counted Votes: {{total}} </p>
+            <p>Total Voters: {{ user_count }} </p>
+            <p>Total Candidates: {{ cands| count}}</p>
+          </div>
+          <div class="col-md-8">
+            <canvas id="myChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -76,25 +71,18 @@
   <script>
     const ctx = document.getElementById('myChart');
     let cands1 = '{{ votes | tojson }}';
-    console.log(JSON.parse(cands1))
+    cands_final = JSON.parse(cands1)
 
-    labels_list = []
-    for (let i=0; i<cands1.length; i++){
-      labels_list.push(cands1)
-    }
-    console.log(labels_list)
+    let cand_labels = Object.keys(cands_final)
+    let cand_data = Object.values(cands_final)
   
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: [
-          'Cand 1',
-          'Cand 2',
-          'Cand 3'
-        ],
+        labels: cand_labels,
         datasets: [{
           label: '# of Votes',
-          data: [19, 12, 3],
+          data: cand_data,
           borderWidth: 1,
         }]
       },

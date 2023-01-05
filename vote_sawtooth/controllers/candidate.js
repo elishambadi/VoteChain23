@@ -10,6 +10,18 @@ exports.allCandidates = async (req, res) => {
     })
 }
 
+exports.findCandidate = async (req, res) => {
+    const one_cand = await Candidate.findOne({
+        id_number: req.body.id_number
+    })
+    if (!one_cand){
+        return res.json({"message":"Candidate not found"}).status(404)
+    }
+    return res.json({
+        user: one_cand
+    })
+}
+
 exports.addCandidate = async (req, res) => {
     const valid = addCandidateSchema.validate(req.body);
     if (valid.error) {
