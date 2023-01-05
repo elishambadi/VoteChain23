@@ -3,7 +3,7 @@
 import os
 import requests
 import json
-from flask import Flask, redirect, url_for, render_template, request, flash, session
+from flask import Flask, redirect, url_for, render_template, request, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from collections import Counter
 
@@ -221,7 +221,9 @@ def vote():
         try:
             resp = send_vote(voted_cand_id).json()
         except json.JSONDecodeError as exc:
-            return "Your web token has expired. Please login again"
+            return "Your web token has expired. Please login again."
+        except AttributeError as exc:
+            return "Error sending vote. You are not logged in."
 
         if 'link' in resp:
             link = resp['link']
@@ -261,9 +263,12 @@ def results():
         dict_vote.append(cand_id)
 
     result = Counter(dict_vote)
-    final = result.items()
+    dict_ = {str(k):v for k,v in result.items()}
+    print(dict_)
 
-    return render_template('results.html', votes=final)
+    # final = jsonify(dict_)
+
+    return render_template('results.html', votes=dict_)
 
 @app.route('/logout')
 def logout():

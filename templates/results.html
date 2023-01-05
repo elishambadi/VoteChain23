@@ -61,17 +61,51 @@
               <td>3000</td>
             </tr>
 
-            {% for cand in votes %}
-            <tr>
-              <th scope="row">3</th>
-              <td>{{ cand[0] }}</td>
-              <td>Some Party</td>
-              <td>{{ cand[1] }}</td>
-            </tr>
-            {% endfor %}
           </tbody>
         </table>
+        {{votes}}
+
+        <div>
+          <canvas id="myChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const ctx = document.getElementById('myChart');
+    let cands1 = '{{ votes | tojson }}';
+    console.log(JSON.parse(cands1))
+
+    labels_list = []
+    for (let i=0; i<cands1.length; i++){
+      labels_list.push(cands1)
+    }
+    console.log(labels_list)
+  
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [
+          'Cand 1',
+          'Cand 2',
+          'Cand 3'
+        ],
+        datasets: [{
+          label: '# of Votes',
+          data: [19, 12, 3],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        indexAxis: 'y'
+      }
+    });
+  </script>
 {% endblock%}
