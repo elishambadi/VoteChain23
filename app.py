@@ -187,9 +187,11 @@ def login_page():
             session['id_number'] = resp['id_number']
             session['token'] = resp['access_token']
             session['username'] = username
+            flash('Logged in successfully')
             return redirect(url_for('vote'))
         else:
-            return "Wrong username or password"
+            flash('Wrong username or password')
+            return redirect(url_for('login_page'))
     else:
         #return 'Welcome to login page';
         return render_template('index.html')
@@ -224,6 +226,7 @@ def register():
         if resp.status_code == 200:
             print("Voter {} registered successfully")
             print(resp.json())
+            flash('Registered successfully. Kindly log in.')
             return redirect(url_for('login_page'))
         else:
             print(resp.status_code)
@@ -271,14 +274,17 @@ def vote():
         print(dict_votes)
 
         if session['id_number'] in dict_votes:
-            return "You have already voted. Kindly wait for the results"
+            flash("You have already voted. Kindly wait for the final results.")
+            return redirect(url_for('results'))
         else:
             try:
                 resp = send_vote(voted_cand_id).json()
             except json.JSONDecodeError as exc:
-                return "Your web token has expired. Please login again."
+                flash("Please log in.")
+                return redirect(url_for('login_page'))
             except AttributeError as exc:
-                return "Error sending vote. You are not logged in."
+                flash("Error sending vote. You are not logged in.")
+                return redirect(url_for('vote'))
 
             if 'link' in resp:
                 link = resp['link']
@@ -288,7 +294,8 @@ def vote():
                 # return render_template('confirm.html', resp=vote_status)
                 return redirect(url_for('confirm'))
             else:
-                return "Error connecting to DB. Please contact the system administrator."
+                flash("Error connecting to DB. Please contact the system administrator.")
+                return redirect(url_for('vote'))
 
     # Get candidates
     else:
@@ -306,6 +313,7 @@ def results():
     except Exception as exc:
         print(exc)
         votes = "There was an error"
+        return votes
 
     votes_list =votes['data']
     dict_vote = []
@@ -355,6 +363,7 @@ def logout():
     session.pop('username', None)
     session.pop('vote-link', None)
     session.pop('id_number', None)
+    flash('You logged out successfully')
     return redirect(url_for('home'))
 
 

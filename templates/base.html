@@ -1,73 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title> {% block title %} Home {% endblock %} - Blockchain Voting</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <!-- our project just needs Font Awesome Solid + Brands -->
-    <script src="https://kit.fontawesome.com/d37b8c8de6.js" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <div class="header">
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="{{ url_for('landing') }}">VoteChain</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item active">
-              <a class="nav-link" href="{{ url_for('home') }}">Home<span class="sr-only"></span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('vote') }}">Vote</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('results') }}">Results</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-            </li>
-            {% if session['token'] %}
-            <li class="nav-item">
-              <a class="nav-link btn btn-danger" href="{{ url_for('logout') }}">Logout</a>
-            </li>
-            <li class=""></li>
-            {% endif %}
 
-            {% if session['username'] %}
-            <li class="nav-item pl-1">
-              <a class="nav-link disabled" style="color: white;" href="#"> Welcome {{ session['username'] }}</a>
-            </li>
-            <li class=""></li>
-            {% endif %}
-            {% if session['id_number'] %}
-            <li class="nav-item pl-1">
-              <a class="nav-link disabled" style="color: white;" href="#"> {{ session['id_number'] }}</a>
-            </li>
-            <li class=""></li>
-            {% endif %}
-          </ul>
-        </div>
-      </nav>
-    </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title> {% block title %} Home {% endblock %} - Blockchain Voting</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <!-- our project just needs Font Awesome Solid + Brands -->
+  <script src="https://kit.fontawesome.com/d37b8c8de6.js" crossorigin="anonymous"></script>
+</head>
 
-    <div class="container-fluid">
-      <div class="content">
-        {% block content %} {% endblock %}
+<body>
+  <div class="header">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="{{ url_for('landing') }}">VoteChain</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('home') }}">Home<span class="sr-only"></span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('vote') }}">Vote</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('results') }}">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+          </li>
+          {% if session['token'] %}
+          <li class="nav-item">
+            <a class="nav-link btn btn-danger" href="{{ url_for('logout') }}">Logout</a>
+          </li>
+          <li class=""></li>
+          {% endif %}
+
+          {% if session['username'] %}
+          <li class="nav-item pl-1">
+            <a class="nav-link disabled" style="color: white;" href="#"> Welcome {{ session['username'] }}</a>
+          </li>
+          <li class=""></li>
+          {% endif %}
+          {% if session['id_number'] %}
+          <li class="nav-item pl-1">
+            <a class="nav-link disabled" style="color: white;" href="#"> {{ session['id_number'] }}</a>
+          </li>
+          <li class=""></li>
+          {% endif %}
+        </ul>
       </div>
+    </nav>
+  </div>
+
+  <div class="container-fluid">
+    <div class="content">
+      <br>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="alert alert-primary alert-dismissible fade show" role="alert">
+        <ul class=flashes>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      {% block content %} {% endblock %}
     </div>
-    <div class="container text-center">
-      copyright ibc.ke
-    </div>
-    <script src="static/main.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
-  </body>
+  </div>
+  <div class="container text-center">
+    copyright ibc.ke
+  </div>
+  <script src="static/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>
