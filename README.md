@@ -10,7 +10,7 @@ Run app.py as a script and access on the browser.
 
 ## Blockchain
 
-Sawtooth blockchain is run from the vote-_sawtooth folder.
+Sawtooth blockchain is run from the vote-sawtooth folder.
 
 To run the blockchain, ensure you are in the blockchain folder. Then run two commands in different tabs:
 
@@ -19,14 +19,16 @@ To run the blockchain, ensure you are in the blockchain folder. Then run two com
 `npm run dev` -
 To start the node server than interfaces with the blockchain
 
-At this point your infrastructure is up, you can write some application code, or use the sample application in test.js file.
+`npm run tp` - To start the transaction processor
 
-Command: `npm run test`
+`./app.py` - To run the Flask endpoint app if you didn't already run it.
 
-The test.js file adds some sample data to the blockchain. Before data is added, it must be organized as below.
+The data flow is as below:
+Flask app files -> NodeJSAPI -> (vote js route -> transaction js controller -> transaction js service -> elec_vote js handler). The role of each file is as below:
 
-Data - Transaction - Batch then sent to the block.
+Vote Js - routes traffic to controller
+Transaction JS controller - unpacks the request and sends data to the service
+Transaction JS service - builds the data into a blockchain transaction
+Elec_vote js - checks and sends the transaction to the blockchain
 
-All these stages are seen in the test.js file.
-
-To view the current blockchain: visit https://localhost:8080/state.
+Meanwhile querying the blockchain is direct through: http://localhost:8008/state once the chain is running locally.
