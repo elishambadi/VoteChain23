@@ -1,3 +1,5 @@
+// This receives the data to add to BC and builds a transaction for it
+
 const { randomBytes, createHash } = require('crypto')
 const secp256k1 = require('secp256k1')
 

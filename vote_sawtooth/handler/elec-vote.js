@@ -1,3 +1,6 @@
+// This section processes the transactions sent by the transaction.js controller
+// Through the transaction js service
+
 const { TransactionHandler } = require('sawtooth-sdk-js/processor/handler')
 
 const {
@@ -29,18 +32,18 @@ class VoteHandler extends TransactionHandler {
 
         switch (payload.actions) {
             case actions.place_vote:
-                // We will insert a Voter ID hash here to get a unique address per voter.
-                // If address is same, block won't be added
+                // Unique block hash, since ids are different, no 2 blocks are same
                 const address = family.namespace + hash(payload.id).slice(-64)
 
                 const data = await context.getState([address]);
 
                 // This code takes some time to run...
-                // I suppose it checks the chole blockchain for addresses
+                // I suppose it checks the whole blockchain for addresses
                 if(data && data[address] && data[address].length !== 0){
                     throw new InvalidTransaction('You have already voted! Please wait for the results');
                 }
 
+                // Add a new object to state
                 return context.setState({
                     [address]: payload.id
                 }).then((addresses) => {

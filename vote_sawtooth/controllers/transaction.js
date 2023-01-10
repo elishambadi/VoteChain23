@@ -1,3 +1,8 @@
+// This receives a data from the user and sends it to transaction js service
+// So it can be built into a transaction
+
+// We get here from the vote js route
+
 const { actions } = require("../constants")
 const { sendTransaction } = require("../service/transaction")
 
