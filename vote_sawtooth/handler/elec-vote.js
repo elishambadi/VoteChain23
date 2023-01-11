@@ -43,7 +43,7 @@ class VoteHandler extends TransactionHandler {
                     throw new InvalidTransaction('You have already voted! Please wait for the results');
                 }
 
-                // Add a new object to state
+                // Add a new object to state 
                 return context.setState({
                     [address]: payload.id
                 }).then((addresses) => {

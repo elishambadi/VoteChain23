@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block title %} Admin {% endblock %}
+
+{% block content %}
+<br>
+<h4 class="text-center"> Admin Home </h4>
+
+<div class="container">
+
+    <div class="row">
+        <div class="text-center col-md-3">
+            {% if  elecs | length  != 0 %}
+                <button class="btn btn-primary" onclick="showAddCand()">Add candidate</button> <br> <br>
+                <button class="btn btn-primary" onclick="showAllCand()">View All Candidates</button> <br> <br>
+            {% endif %}
+
+            <button class="btn btn-primary" onclick="showAddElec()">Start the Election</button> <br> <br>
+            <button class="btn btn-primary" onclick="showAllElec()">View all elections</button>
+        </div>
+    
+        
+        {% if elecs | length == 0 %}
+        <p class="display-4" style="margin:auto"> Add an election first</p>
+        {% else %}
+        <div class="col-md-9" id="add-candidate" style="display: none">
+            <form method="post">
+                <input type="hidden" name="cand-form" value="cand-form">
+                <div class="mb-3">
+                    <label for="inputPassword5" class="form-label">ID</label>
+                    <input type="number" id="inputPassword5" class="form-control"
+                        aria-describedby="passwordHelpBlock" name="id_no" maxlength="8" required="true">
+                    <!-- <div id="passwordHelpBlock" class="form-text">
+                Your ID must be 6-8 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+              </div> -->
+                    <div id="passwordHelpBlock" class="form-text">
+                        Please ensure your ID number is 8 characters long. Otherwise you won't vote. No really,
+                        system wont work.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="exampleName" aria-describedby="nameHelp"
+                        maxlength="50" name="name" value="{{request.form['name']}}" required="true">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleParty" class="form-label">Party Name</label>
+                    <input type="text" class="form-control" id="exampleParty" aria-describedby="emailHelp"
+                        maxlength="20" name="party" value="{{request.form['party']}}" required="true">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleposition" class="form-label">Position</label>
+                    <input type="text" class="form-control" id="exampleposition" aria-describedby="emailHelp"
+                        maxlength="20" name="position" value="{{request.form['position']}}" required="true">
+                </div>
+                <div class="mb-3">
+                    <label for="examplecounty" class="form-label">County</label>
+                    <input type="text" class="form-control" id="examplecounty" aria-describedby="emailHelp"
+                        maxlength="20" name="county" value="{{request.form['county']}}" required="true">
+                </div>
+                <div class="mb-3 input-group">
+                    <label for="exampleelection" class="input-group-text">Select Election </label>
+                    <select class="custom-select" id="inputGroupSelect01" name="election">
+                        <option selected>Choose Election...</option>
+                        {% for elec in elecs['all_elecs'] %}
+                        <option value="{{ elec['name'] }}">{{ elec['name'] }}</option>
+                        {% endfor %}
+                      </select>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <input type="email" class="form-control" name="email" id="exampleInputEmail1" maxlength="50"
+                        aria-describedby="emailHelp" value="{{ request.form['email'] }}" required="true">
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">I confirm the submitted information is
+                        correct</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Candidate</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="col-md-9" id="show-candidates" style="display: none">
+            <p class="display-5">Show all candidates here</p>
+            {% if  cands | length  == 0 %}
+                <br><br>
+                <p class="display-5">No candidates at this time</p>
+            {% else %}
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Party At</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">County</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for cand in cands %}
+                    <tr>
+                        <td>{{cand['id_number']}}</td>
+                        <td>{{cand['name']}}</td>
+                        <td>{{cand['party']}}</td>
+                        <td>{{cand['position']}}</td>
+                        <td>{{cand['county']}}</td>
+                        <td>{{cand['email']}}</td>
+                        <td>{{cand['election']}}</td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="del-cand" value="{{cand['name']}}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            {% endif %}
+        </div>
+
+        <div class="col-md-9" id="add-election" style="display: none">
+            {% if elecs | length > 0 %}
+            <p class="display-6" style="margin: auto">
+                Election "{{ elecs['all_elecs'][0]['name'] }}" already running
+            </p>
+            {% else %}
+            <form method="post">
+                <input type="hidden" name="elec-form" value="elec-form">
+                <div class="mb-3">
+                    <label for="exampleName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="exampleFullName" aria-describedby="nameHelp"
+                        maxlength="50" name="name" value="{{request.form['name']}}" required="true">
+                </div>
+                <div class="mb-3">
+                    
+                    <label for="exampledeadline" class="form-label">Deadline</label>
+                    <div id="deadlineHelpBlock" class="form-text">
+                        Sample date format: 2024-02-20 08:30 (YYYY-MM-DD HH:SS)
+                    </div>
+                    <input type="datetime" class="form-control" id="exampledeadline" aria-describedby="emailHelp"
+                        maxlength="20" name="deadline" value="{{request.form['deadline']}}" required="true">
+                </div>
+                <button type="submit" class="btn btn-primary">Start Election</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="col-md-9" id="show-election" style="display: none">
+            <p class="display-5">Show all elections here</p>
+            {% if  elecs | length  == 0 %}
+                <br><br>
+                <p class="display-5">No election at this time</p>
+            {% else %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Deadline</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for elec in elecs['all_elecs'] %}
+                        <tr>
+                            <td>{{elec['name']}}</td>
+                            <td>{{elec['deadline']}}</td>
+                            <td>{{elec['created_at']}}</td>
+                            <td>
+                                <form method="post">
+                                    <input type="hidden" name="del-elec" value="{{elec['name']}}">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    let addCand = document.getElementById("add-candidate");
+    let allCand = document.getElementById("show-candidates");
+    let addElec = document.getElementById("add-election");
+    let allElec = document.getElementById("show-election");
+
+    function showAddCand() {
+        if (addCand.style.display === "none") {
+            addCand.style.display = "block";
+            allCand.style.display = "none";
+            addElec.style.display = "none";
+            allElec.style.display = "none";
+        } else {
+            addCand.style.display = "none";
+        }
+    }
+
+    function showAllCand() {
+        if (allCand.style.display === "none") {
+            addCand.style.display = "none";
+            allCand.style.display = "block";
+            addElec.style.display = "none";
+            allElec.style.display = "none";
+        } else {
+            allCand.style.display = "none";
+        }
+    }
+
+    function showAddElec() {
+        if (addElec.style.display === "none") {
+            addCand.style.display = "none";
+            allCand.style.display = "none";
+            addElec.style.display = "block";
+            allElec.style.display = "none";
+        } else {
+            addElec.style.display = "none";
+        }
+    }
+
+    function showAllElec() {
+        if (allElec.style.display === "none") {
+            addCand.style.display = "none";
+            allCand.style.display = "none";
+            addElec.style.display = "none";
+            allElec.style.display = "block";
+        } else {
+            allElec.style.display = "none";
+        }
+    }
+</script>
+{% endblock%}

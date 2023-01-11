@@ -2,6 +2,7 @@ const addCandidateSchema = require('../validations/register-candidate')
 
 const Candidate = require('../schemas/candidate')
 const { SECRET } = require('../config');
+const Election = require('../schemas/election');
 
 exports.allCandidates = async (req, res) => {
     const all_candidates = await Candidate.find()
@@ -39,7 +40,7 @@ exports.addCandidate = async (req, res) => {
     }
 
     // Parameters to be passed in the request
-    const { id_number, email, name, party, position, county } = req.body;
+    const { id_number, email, name, party, position, county, election} = req.body;
 
     // Create a new user with the given values
     await Candidate.create({
@@ -48,7 +49,8 @@ exports.addCandidate = async (req, res) => {
         party,
         position,
         county,
-        email
+        email,
+        election
     })
 
     res.json({

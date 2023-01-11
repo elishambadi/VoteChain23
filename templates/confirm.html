@@ -9,10 +9,12 @@
 
     <p>Status: {{ resp['data'][0]['status'] }}</p>
 
+    <!-- Check for invalid transactions and display the message -->
     {% if resp['data'][0]['invalid_transactions'][0] %}
         <p>{{ resp['data'][0]['invalid_transactions'][0]['message'] }}</p>
     {% endif %}
     <br>
+    <!-- End check -->
 
     <p>Link: {{ resp['link'] }} </p>
 

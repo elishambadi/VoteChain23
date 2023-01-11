@@ -7,7 +7,8 @@ const candidateSchema = new Schema({
   party: String,
   position: String,
   county: String,
-  email: String
+  email: String,
+  election: String
 });
 
 const Candidate = mongoose.model('Candidate', candidateSchema)

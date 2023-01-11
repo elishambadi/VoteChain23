@@ -19,13 +19,13 @@
         </div>
       </div>
       <div class="mb-3">
-        <label for="exampleFullName" class="form-label">Full Name</label>
-        <input type="text" class="form-control" id="exampleFullName" aria-describedby="emailHelp" maxlength="50" name="name" value="{{request.form['name']}}" required="true">
+        <label for="exampleInputEmail1" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" maxlength="50" name="name" value="{{request.form['name']}}" required="true">
       </div>
       <div class="mb-3">
-        <label for="exampleUsername" class="form-label">Username</label>
+        <label for="exampleInputEmail1" class="form-label">Username</label>
           <div id="usernameHelp" class="form-text">Your two names without spaces: e.g. JeffJuma</div>
-        <input type="text" class="form-control" id="exampleUsername" aria-describedby="emailHelp" maxlength="20" name="username" value="{{request.form['username']}}" required="true">
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" maxlength="20" name="username" value="{{request.form['username']}}" required="true">
       </div>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email address</label>
@@ -43,5 +43,4 @@
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
-
 {% endblock%}

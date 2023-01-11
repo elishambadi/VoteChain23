@@ -55,6 +55,15 @@
 
         <div class="row">
           <div class="col-md-4 text-center">
+            <p>Election '{{ election[0]['name'] }}' is running.</p>
+            <p class="display-6">
+              <span>Remaining Time: </span>
+              <span id="days"> days</span>
+              <span id="hours"> hours</span>
+              <span id="minutes"> mins</span>
+              <span id="seconds"> secs</span>
+              <span id="end"></span>
+            </p>
             <p>Total Counted Votes: {{total}} </p>
             <p>Total Voters: {{ user_count }} </p>
             <p>Total Candidates: {{ cands| count}}</p>
@@ -95,5 +104,37 @@
         indexAxis: 'y'
       }
     });
+
+    // Countdown Clock Script
+    let endDate = new Date('{{ end_time}}').getTime()
+
+    var myfunc = setInterval(function() {
+      var now = new Date().getTime();
+      var timeleft = endDate - now;
+          
+      var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+
+      document.getElementById("days").innerHTML = days + "d "
+      document.getElementById("hours").innerHTML = hours + "h " 
+      document.getElementById("minutes").innerHTML = minutes + "m " 
+      document.getElementById("seconds").innerHTML = seconds + "s"
+
+      if (timeleft < 0) {
+        clearInterval(myfunc);
+        document.getElementById("days").innerHTML = ""
+        document.getElementById("hours").innerHTML = "" 
+        document.getElementById("mins").innerHTML = ""
+        document.getElementById("secs").innerHTML = ""
+        document.getElementById("end").innerHTML = "TIME UP!!";
+
+        Http.onreadystatechange = (e) => {
+          console.log(Http.responseText)
+        }
+      }
+    }, 1000)
+
   </script>
 {% endblock%}

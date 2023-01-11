@@ -7,7 +7,8 @@ const schema = Joi.object({
     party: Joi.string().max(50),
     position: Joi.string().max(50),
     county: Joi.string().max(50),
-    email: Joi.string().max(50)
+    email: Joi.string().max(50),
+    election: Joi.string().max(50)
 })
 
 // Some of this validation is done on Flask side
