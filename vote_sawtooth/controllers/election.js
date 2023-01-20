@@ -1,5 +1,7 @@
 const { SECRET } = require('../config');
+const Candidate = require('../schemas/candidate');
 const Election = require('../schemas/election');
+const User = require('../schemas/user');
 
 exports.deleteElection = async (req, res) => {
     
@@ -25,6 +27,37 @@ exports.allElection = async (req, res) => {
     const all_elecs = await Election.find()
     return res.json({
         all_elecs
+    })
+}
+
+exports.oneElection = async (req, res) => {
+    const one_elec = await Election.findById(req.body.election_id)
+    return res.json({
+        election: one_elec
+    })
+}
+
+// Clears all collections to start a fresh election
+exports.refreshAll = async (req, res) => {
+
+    await Election.deleteMany({});
+
+    await Candidate.deleteMany({});
+
+    await User.deleteMany({});
+
+    return res.json({
+        "message": "System refreshed successfully"
+    })
+}
+
+exports.endElection = async (req, res) => {
+    const elec_name = req.body.election_name
+
+    await Election.updateOne({name: elec_name}, {'status':'ended'});
+
+    return res.json({
+        "message":"Election ended successfully"
     })
 }
 

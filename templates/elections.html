@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %} Vote {% endblock %}
+
+{% block content %}
+  
+<br>
+<h6 class="text-center" style="color: rgb(170, 170, 170);">VoteChain23</h6>
+<br>
+<div class="container text-center">
+    <p class="display-6">Elections</p>
+    {% if elecs['all_elecs'] | length == 0 %}
+    <p class="display-5">No elections running at this time</p>
+    {% else %}
+    
+        <div class="row">
+            {% for elec in elecs %}
+            <div class="col-md-3">
+                <a href="vote/{{ elecs['all_elecs'][0]['_id'] }}">
+                    <button class="btn btn-info">
+                        {{ elecs['all_elecs'][0]['name'] }}
+                    </button>
+                </a>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+
+{% endblock%}

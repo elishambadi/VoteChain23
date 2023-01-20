@@ -24,7 +24,20 @@
       </div> -->
       <div class="container">
         <br>
-        <h2 class="text-center">Results Tally</h2>
+        <h2 class="text-center">
+          {%if election['status'] == 'ended' %}
+            <span>Final </span>
+          {% endif %}
+          {{ election['name'] }} Results Tally</h2>
+
+        <div class="float-left">
+          <form method="post" id="myForm2">
+            <input type="hidden" name="afresh" value="afresh">
+            <input type="submit" value=""><button class="btn btn-danger">Start afresh</button>
+            <span>Election ID :{{ elec_id }}</span>
+          </form>
+        </div>
+
         <table class="table">
           <thead>
             <tr>
@@ -55,15 +68,19 @@
 
         <div class="row">
           <div class="col-md-4 text-center">
-            <p>Election '{{ election[0]['name'] }}' is running.</p>
-            <p class="display-6">
-              <span>Remaining Time: </span>
-              <span id="days"> days</span>
-              <span id="hours"> hours</span>
-              <span id="minutes"> mins</span>
-              <span id="seconds"> secs</span>
-              <span id="end"></span>
-            </p>
+            {% if election['status'] == 'ongoing' %}
+              <p>Election '{{ election['name'] }}' is running.</p>
+              <p class="display-6">
+                <span id="days"></span>
+                <span id="hours"></span>
+                <span id="mins"></span>
+                <span id="secs"></span>
+              </p>
+              <p id="end">Running</p>
+            {%elif election['status'] == 'ended' %}
+              <p>Election '{{ election['name'] }}' has ended</p>
+            {% endif %}
+
             <p>Total Counted Votes: {{total}} </p>
             <p>Total Voters: {{ user_count }} </p>
             <p>Total Candidates: {{ cands| count}}</p>
@@ -73,7 +90,12 @@
           </div>
         </div>
       </div>
+    
     </div>
+    <form method="post" id="myForm">
+      <input type="hidden" name="name" value="{{ election['name'] }}">
+      <input type="hidden" name="elec-done" value="elec-done">
+    </form>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -109,32 +131,35 @@
     let endDate = new Date('{{ end_time}}').getTime()
 
     var myfunc = setInterval(function() {
-      var now = new Date().getTime();
+      var now = new Date().getTime() - (3*60*60*1000);
       var timeleft = endDate - now;
-          
-      var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
-
-      document.getElementById("days").innerHTML = days + "d "
-      document.getElementById("hours").innerHTML = hours + "h " 
-      document.getElementById("minutes").innerHTML = minutes + "m " 
-      document.getElementById("seconds").innerHTML = seconds + "s"
 
       if (timeleft < 0) {
         clearInterval(myfunc);
+        console.log(timeleft)
         document.getElementById("days").innerHTML = ""
         document.getElementById("hours").innerHTML = "" 
         document.getElementById("mins").innerHTML = ""
         document.getElementById("secs").innerHTML = ""
-        document.getElementById("end").innerHTML = "TIME UP!!";
+        document.getElementById("end").innerHTML = "Election Done"
 
-        Http.onreadystatechange = (e) => {
-          console.log(Http.responseText)
-        }
+        // Once time is up, send http request to change election status in DB
+        alert('Election has ended');
+        document.forms["myForm"].submit();
       }
-    }, 1000)
+      else{
+          
+        var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
 
+        document.getElementById("days").innerHTML = days + "d "
+        document.getElementById("hours").innerHTML = hours + "h " 
+        document.getElementById("mins").innerHTML = minutes + "m " 
+        document.getElementById("secs").innerHTML = seconds + "s"
+      }
+
+    }, 1000)
   </script>
 {% endblock%}

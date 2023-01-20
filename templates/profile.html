@@ -14,8 +14,8 @@
 
     <div class="status">
       <h2>VOTER STATUS</h2>
+
       <br>
-      {% for voter in voters %}
       <div class="card text-bg-success mb-3" style="max-width: 700px;">
         <div class="row g-0">
           <div class="col-md-4">
@@ -23,15 +23,14 @@
           </div>
           <div class="col-md-8">
             <div class="card-body">
-              <h5 class="card-title">{{voter['Name']}}</h5>
+              <h5 class="card-title">{{ session['username'] }}</h5>
               
-              <p class="card-text">This Individual. Id no. {{voter['ID']}} is a registered voter in {{voter['Province']}} and is elligble to vote. To proceed to voting page click the link below.</p>
-              <p class="card-text"><small class="text-dark">Registration date</small></p>
+              <p class="card-text">This Individual. Id no. {{ session['id_number'] }} is a registered voter and is elligble to vote. To proceed to voting page click the link below. </p>
+              <a href=elections class="link"><button class="btn btn-info"> Go vote</button></a>
             </div>
           </div>
         </div>
       </div>
-      {% endfor %}
       <!--  If voter status is registered add not yet voted the link below should display ad redirect them to the vote page-->
       <link rel="stylesheet" href="">
     </div>

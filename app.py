@@ -75,7 +75,7 @@ def query_api_login(username, password):
 
 #Sends a vote to the blockchain via API
 def send_vote(cand_id):
-    vote="VID"+session['id_number']+"CID"+cand_id+"x2022"
+    vote="ELE"+session['election-id']+"VID"+session['id_number']+"CID"+cand_id+"ELExx2022"
     try:
         headers = {
             "Authorization": 'Bearer '+session['token']
@@ -134,9 +134,21 @@ def find_candidate(id_number):
     return data
 
 # Add candidate via API
-def find_all_candidates():
+def find_all_candidates(elec_id):
+    payload = {
+        'election_id': elec_id
+    }
+
     try:
-        data = requests.get('http://localhost:8080/candidate/all')
+        data = requests.get('http://localhost:8080/candidate/all', json=payload)
+    except Exception as exc:
+        print(exc)
+        data = None
+    return data
+
+def find_all_candidates_admin():
+    try:
+        data = requests.get('http://localhost:8080/candidate/index')
     except Exception as exc:
         print(exc)
         data = None
@@ -160,6 +172,17 @@ def find_all_elections():
         data = None
     return data
 
+def find_one_election():
+    try:
+        payload = {
+            "election_id": session['election-id']
+        }
+        data = requests.post('http://localhost:8080/election/get', json=payload)
+    except Exception as exc:
+        print(exc)
+        data = None
+    return data
+
 #Add election
 def add_election(payload):
     try:
@@ -168,6 +191,32 @@ def add_election(payload):
         print(exc)
         data = None
     return data
+
+# End election
+def end_election(payload):
+    try:
+        data = requests.post('http://localhost:8080/election/end', json=payload)
+    except Exception as exc:
+        print(exc)
+        data = None
+    return data
+
+# Start afresh
+def start_afresh():
+    try:
+        data = requests.post('http://localhost:8080/election/refresh')
+    except Exception as exc:
+        print(exc)
+        data = None
+    return data
+
+def logout_func():
+    session.pop('token', None)
+    session.pop('username', None)
+    session.pop('vote-link', None)
+    session.pop('id_number', None)
+    session.pop('election-id', None)
+    flash('You logged out successfully')
 
 # End of functions
 
@@ -197,7 +246,7 @@ def login_page():
             session['token'] = resp['access_token']
             session['username'] = username
             flash('Logged in successfully')
-            return redirect(url_for('vote'))
+            return redirect(url_for('elections'))
         else:
             flash('Wrong username or password')
             return redirect(url_for('login_page'))
@@ -261,9 +310,24 @@ def confirm():
 
     return render_template('confirm.html', resp=vote_status)
 
+@app.route('/elections', methods=('GET', 'POST'))
+def elections():
+    # Getting all elections
+    try:
+        elecs = find_all_elections().json()
+    except Exception as exc:
+        print(exc)
+        elecs = "Error getting elections"
+        print(elecs)
 
-@app.route('/vote', methods=('GET', 'POST'))
-def vote():
+    return render_template('elections.html', elecs=elecs)
+
+
+@app.route('/vote/<id>', methods=('GET', 'POST'))
+def vote(id):
+
+    #Setting election id to session
+    session['election-id'] = id
 
     if request.method == 'POST':
         voted_cand_id = request.form['voted-cand-id']
@@ -275,19 +339,27 @@ def vote():
             print(exc)
             return "Error getting votes"
 
-        votes_list = resp['data']
-        dict_votes = []
-        for i in range(1, len(votes_list)):
-            voter_id = votes_list[i].get('data')[3:11]
-            dict_votes.append(voter_id)
+        if 'id_number' not in session:
+            flash('Kindly register and login before voting')
+            return(redirect(url_for('login_page')))
 
-        print(session['id_number'])
-        print(dict_votes)
+        votes_list = resp['data']
+        arr_votes = []
+        arr_elecs = []
+        for i in range(1, len(votes_list)):
+            voter_id = votes_list[i].get('data')[30:38]
+            elec_id = votes_list[i].get('data')[3:27]
+
+            if(session['id_number'] == voter_id and session['election-id'] == elec_id):
+                flash("You have already voted. Kindly wait for the final results.")
+                return redirect(url_for('results'))
+
 
         # 2. Vote check
-        if session['id_number'] in dict_votes:
-            flash("You have already voted. Kindly wait for the final results.")
-            return redirect(url_for('results'))
+        if 'id_number' not in session:
+            flash('Kindly register and login before voting')
+            return(redirect(url_for('login_page')))
+
         else:
             try:
                 # 3. If no vote found, then now we send a vote
@@ -297,7 +369,7 @@ def vote():
                 return redirect(url_for('login_page'))
             except AttributeError as exc:
                 flash("Error sending vote. You are not logged in.")
-                return redirect(url_for('vote'))
+                return redirect(url_for('login'))
 
             # 4. If vote sent, then we get vote data
             if 'link' in resp:
@@ -308,11 +380,21 @@ def vote():
                 return redirect(url_for('confirm'))
             else:
                 flash("Error connecting to DB. Please contact the system administrator.")
-                return redirect(url_for('vote'))
+                return redirect(url_for('elections'))
 
     # Get candidates if GET /vote
     else:
-        resp = find_all_candidates().json()['all_candidates']
+        #-------------------------------
+        # Find candidates by election ID
+        #-------------------------------
+        try:
+            resp = find_all_candidates(session['election-id'])
+            resp_ = resp.json()
+            print(resp_)
+        except Exception as exc:
+            print(exc)
+            resp_ = "Error getting candidates"
+
         try:
             elec = find_all_elections().json()['all_elecs']
         except Exception as exc:
@@ -320,16 +402,46 @@ def vote():
             elec = "There was an error getting the elections"
 
         # Election time countdown
-        end = dt.datetime.strptime(elec[0]['deadline'][:-5], '%Y-%m-%dT%H:%M:%S')
+        if (elec):
+            end = dt.datetime.strptime(elec[0]['deadline'][:-5], '%Y-%m-%dT%H:%M:%S')
+        else:
+            flash("No elections running. Please contact your admin.")
+            return redirect(url_for('login_page'))
         #End of countdown
 
+        count = 0
+
         #return 'Welcome to voting page';
-        return render_template('vote.html', cands=resp, election=elec, end_time=end)
+        return render_template('vote.html', cands=resp_, election=elec, end_time=end,count=count)
 
 
-@app.route('/results')
+@app.route('/results', methods=('GET', 'POST'))
 def results():
-    # 1. Get all votes
+    if request.method == 'POST':
+        if 'elec-done' in request.form:
+            payload = {
+                "election_name": request.form['name']
+            }
+            try:
+                resp = end_election(payload).json()
+
+            except Exception as exc:
+                print(exc)
+                resp = None
+
+        elif 'afresh' in request.form:
+            try:
+                resp = start_afresh().json()
+
+            except Exception as exc:
+                print(exc)
+                resp = None
+
+            flash(resp['message'])
+            logout_func()
+            return redirect(url_for('login_page'))
+
+    # 1. Get all profiles
     resp = test_all_votes().json()
 
     try:
@@ -340,30 +452,44 @@ def results():
         return votes
 
     votes_list =votes['data']
+    vote_count = 0;
     dict_vote = []
     cand_votes = []
 
     # 2. Extract data from votes by splicing the string
     for i in range(1, len(votes_list)):
         # voter_id = votes_list[i].get('data')
-        voter_id = votes_list[i].get('data')[3:10]
-        cand_id = votes_list[i].get('data')[14:22]
+        elec_id = votes_list[i].get('data')[3:27]
+        voter_id = votes_list[i].get('data')[30:38]
+        cand_id = votes_list[i].get('data')[41:49]
         print(votes_list[i].get('data'))
         print(voter_id+" "+cand_id)
 
-        cand_name = find_candidate(cand_id).json()['user']["name"]
+        if 'election-id' not in session:
+            flash('Select an election')
+            return(redirect(url_for('elections')))
 
-        dict_vote.append(cand_name)
+        if elec_id == session['election-id']:
+            try:
+                cand_name = find_candidate(cand_id).json()['user']["name"]
+                dict_vote.append(cand_name)
+                vote_count += 1
+            except KeyError:
+                flash('No candidates or elections available.')
+                return(redirect(url_for('results')))
+
 
     # 3. Count occurrences of each unique candidate name in the dictionary
     result = Counter(dict_vote)
     dict_ = {str(k):v for k,v in result.items()}
     print(dict_)
 
-    vote_count = len(votes_list) - 1;
-
     # 4. Get all candidates and append their vote count to their details
-    all_cands = find_all_candidates().json()['all_candidates']
+    try:
+        all_cands = find_all_candidates(session['election-id']).json()['all_candidates']
+    except KeyError:
+        flash('No elections running')
+        return(redirect(url_for('elections')))
 
     try:
         all_user = find_all_users().json()['all_users']
@@ -381,13 +507,17 @@ def results():
             all_cands[i]['count'] = 0
 
     try:
-        elec = find_all_elections().json()['all_elecs']
+        elec = find_one_election().json()['election']
     except Exception as exc:
         print(exc)
         elec = "There was an error getting the elections"
 
     # Election time countdown
-    end = dt.datetime.strptime(elec[0]['deadline'][:-5], '%Y-%m-%dT%H:%M:%S')
+    if (elec):
+        end = dt.datetime.strptime(elec['deadline'][:-5], '%Y-%m-%dT%H:%M:%S')
+    else:
+        flash("No elections running. Please contact your admin.")
+        return redirect(url_for('login_page'))
     #End of countdown
 
     # Returning all of the data
@@ -397,7 +527,8 @@ def results():
         votes=dict_,
         cands=all_cands,
         total=vote_count,
-        user_count = users_)
+        user_count = users_,
+        elec_id = elec_id)
 
 # Admin routes
 
@@ -415,6 +546,7 @@ def admin_home():
             try:
                 resp = add_election(payload).json()
                 flash('Election added successfully.')
+
             except Exception as exc:
                 print(exc)
                 resp = "Error adding election"
@@ -448,7 +580,7 @@ def admin_home():
 
     # Getting all candidates
     try:
-        cands = find_all_candidates().json()['all_candidates']
+        cands = find_all_candidates_admin().json()['all_candidates']
     except Exception as exc:
         print(exc)
         cands = "Error getting candidates"
@@ -470,11 +602,7 @@ def admin_home():
 @app.route('/logout')
 def logout():
     # Destroying all sessions
-    session.pop('token', None)
-    session.pop('username', None)
-    session.pop('vote-link', None)
-    session.pop('id_number', None)
-    flash('You logged out successfully')
+    logout_func()
     return redirect(url_for('home'))
 
 

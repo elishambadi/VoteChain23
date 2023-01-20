@@ -98,6 +98,7 @@
                     <th scope="col">Position</th>
                     <th scope="col">County</th>
                     <th scope="col">Email</th>
+                    <th scope="col">Election</th>
                     <th scope="col">Delete</th>
                     </tr>
                 </thead>
@@ -126,7 +127,7 @@
         </div>
 
         <div class="col-md-9" id="add-election" style="display: none">
-            {% if elecs | length > 0 %}
+            {% if elecs['all_elecs'] | length > 0 %}
             <p class="display-6" style="margin: auto">
                 Election "{{ elecs['all_elecs'][0]['name'] }}" already running
             </p>
@@ -142,7 +143,7 @@
                     
                     <label for="exampledeadline" class="form-label">Deadline</label>
                     <div id="deadlineHelpBlock" class="form-text">
-                        Sample date format: 2024-02-20 08:30 (YYYY-MM-DD HH:SS)
+                        Sample date format: 2024-02-20 08:30 (YYYY-MM-DD HH:SS).
                     </div>
                     <input type="datetime" class="form-control" id="exampledeadline" aria-describedby="emailHelp"
                         maxlength="20" name="deadline" value="{{request.form['deadline']}}" required="true">

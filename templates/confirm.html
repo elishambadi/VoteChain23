@@ -1,13 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %} Voter Profile {% endblock %}
+{% block title %} Confirm Vote {% endblock %}
 
 {% block content %}
 <div class="container">
     <br>
     <h3 class="text-center">Confirm your vote</h3>
 
-    <p>Status: {{ resp['data'][0]['status'] }}</p>
+    <p>Check Your Vote Status: </p>
+
+    {% if resp['data'][0]['status'] == 'PENDING' %}
+     <span>Still Pending</span>
+     <div class="spinner-border text-success m-1" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <br>
+      <p class="grey">Vote confirmation usually takes between 10 seconds to 1 minute. Please wait.</p>
+    {% else %}
+    <span>Vote Recorded <i class="bi bi-check"></i></span>
+    <br>
+    {% endif %}
 
     <!-- Check for invalid transactions and display the message -->
     {% if resp['data'][0]['invalid_transactions'][0] %}
@@ -18,9 +30,21 @@
 
     <p>Link: {{ resp['link'] }} </p>
 
-    <form method="post">
-        <input type="hidden" value=" {{ resp['link'] }} ">
-        <input type="submit" class="btn btn-success" value="Check your vote">
-    </form>
+    <div class="row">
+        <div class="col">
+            <form method="post">
+                <input type="hidden" value=" {{ resp['link'] }} ">
+                <input type="submit" class="btn btn-success" value="Check your vote">
+            </form>
+        </div>
+    
+        <div class="col">
+            <p class="center"><a href=results>
+                <button class="btn btn-success">
+                    View Results
+                </button>
+            </a></p>
+        </div>
+    </div>
 </div>
 {% endblock%}
