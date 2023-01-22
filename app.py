@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # Entry point of the app
 import os
-import requests
 import json
 import datetime as dt
 
@@ -9,6 +8,7 @@ from flask import Flask, redirect, url_for, render_template, request, flash, ses
 from collections import Counter
 
 from sqlalchemy.sql import func
+import requests
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -442,7 +442,11 @@ def results():
             return redirect(url_for('login_page'))
 
     # 1. Get all profiles
-    resp = test_all_votes().json()
+    try:
+        resp = test_all_votes().json()
+    except AttributeError:
+        flash("No votes yet.")
+        return redirect(url_for('elections'))
 
     try:
         votes = resp
